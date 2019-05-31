@@ -1,4 +1,4 @@
-Inventory Host
+#Inventory Host
 
 #
 # ansible inventory for OpenShift Container Platform  3.11.51
@@ -10,7 +10,7 @@ Inventory Host
 ### Ansible Vars
 ###########################################################################
 timeout=60
-ansible_user=ec2-user
+ansible_user=root
 ansible_become=yes
 
 ###########################################################################
@@ -26,10 +26,10 @@ openshift_disable_check="disk_availability,memory_availability,docker_image_avai
 # If openshift_image_tag is set, its value is used for all hosts in system container environments, even those that have another version installed. If
 # Use this variable to specify a container image tag to install or configure.
 #openshift_pkg_version is set, its value is used for all hosts in RPM-based environments, even those that have another version installed.
-openshift_image_tag=v3.11.51
+openshift_image_tag=v3.11.98
 # Use this variable to specify an RPM version to install or configure.
-openshift_pkg_version=-3.11.51
-openshift_release=3.11.51
+openshift_pkg_version=-3.11.98
+openshift_release=3.11.98
 
 
 # Node Groups
@@ -51,11 +51,11 @@ openshift_enable_olm=true
 
 #oreg_url=registry.access.redhat.com/openshift3/ose-${component}:${version}
 oreg_url=registry.redhat.io/openshift3/ose-${component}:${version}
-oreg_auth_user=TU_RHN_ACCOUNT
-oreg_auth_password=TU_PASSWORD
+oreg_auth_user=neoris_dc
+oreg_auth_password=N3oris.2019
 
 # For Operator Framework Images
-openshift_additional_registry_credentials=[{'host':'registry.connect.redhat.com','user':'TU_RHN_ACCOUNT','password':'TU_PASSWORD','test_image':'mongodb/enterprise-operator:0.3.2'}]
+openshift_additional_registry_credentials=[{'host':'registry.connect.redhat.com','user':'neoris_dc','password':'N3oris.2019','test_image':'mongodb/enterprise-operator:0.3.2'}]
 
 openshift_examples_modify_imagestreams=true
 
@@ -71,9 +71,9 @@ openshift_master_api_port=443
 openshift_master_console_port=443
 
 #Default:  openshift_master_cluster_method=native
-openshift_master_cluster_hostname=loadbalancer.3771.internal
-openshift_master_cluster_public_hostname=loadbalancer.3771.example.opentlc.com
-openshift_master_default_subdomain=apps.3771.example.opentlc.com
+openshift_master_cluster_hostname=master01.neoris.net
+openshift_master_cluster_public_hostname=master01.neoris.net
+openshift_master_default_subdomain=cloudapp.neoris.net
 #openshift_master_ca_certificate={'certfile': '/root/intermediate_ca.crt', 'keyfile': '/root/intermediate_ca.key'}
 openshift_master_overwrite_named_certificates=True
 
@@ -90,6 +90,7 @@ openshift_master_overwrite_named_certificates=True
 ###########################################################################
 ### OpenShift Network Vars
 ###########################################################################
+#os_firewall_use_firewalld=True
 
 osm_cluster_network_cidr=10.1.0.0/16
 openshift_portal_net=172.30.0.0/16
@@ -112,13 +113,13 @@ os_sdn_network_plugin_name='redhat/openshift-ovs-subnet'
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
 
 #Password = admin
-openshift_master_htpasswd_users={'jcano': '$apr1$ufo89ihj$nFOwhxNeRYY7QhMMeOchZ1', 'admin':'$apr1$ufo89ihj$nFOwhxNeRYY7QhMMeOchZ1'}
+openshift_master_htpasswd_users={'jalcazar': '$apr1$ufo89ihj$nFOwhxNeRYY7QhMMeOchZ1', 'admin':'$apr1$ufo89ihj$nFOwhxNeRYY7QhMMeOchZ1'}
 
 
 # LDAP and HTPASSWD dependencies
 
-openshift_master_htpasswd_file=/root/htpasswd.openshift
-openshift_master_ldap_ca_file=/root/ipa-ca.crt
+#openshift_master_htpasswd_file=/root/htpasswd.openshift
+#openshift_master_ldap_ca_file=/root/ipa-ca.crt
 
 
 ###########################################################################
@@ -225,7 +226,7 @@ openshift_hosted_registry_enforcequota=true
 
 openshift_hosted_registry_storage_kind=nfs
 openshift_hosted_registry_storage_access_modes=['ReadWriteMany']
-openshift_hosted_registry_storage_nfs_directory=/srv/nfs
+openshift_hosted_registry_storage_nfs_directory=/shareOCP/nfs
 openshift_hosted_registry_storage_nfs_options='*(rw,root_squash)'
 openshift_hosted_registry_storage_volume_name=registry
 openshift_hosted_registry_storage_volume_size=20Gi
@@ -253,43 +254,43 @@ ansible_service_broker_local_registry_whitelist=['.*-apb$']
 # openshift_node_problem_detector_install
 
 [OSEv3:children]
-lb
+#lb
 masters
 etcd
 nodes
 nfs
 
 [lb]
-loadbalancer.3771.internal
+#loadbalancer.3771.internal
 
 [masters]
-master1.3771.internal
-master2.3771.internal
-master3.3771.internal
+master01.neoris.net
+#master2.3771.internal
+#master3.3771.internal
 
 [etcd]
-master1.3771.internal
-master2.3771.internal
-master3.3771.internal
+master01.neoris.net
+#master2.3771.internal
+#master3.3771.internal
 
 [nodes]
 ## These are the masters
-master1.3771.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
-master2.3771.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
-master3.3771.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
+master01.neoris.net openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
+#master2.3771.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
+#master3.3771.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
 
 ## These are infranodes
-infranode1.3771.internal openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
-infranode2.3771.internal openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
+infra01.neoris.net openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
+#infranode2.3771.internal openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
 
 ## These are regular nodes
-node1.3771.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
-node2.3771.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
-node3.3771.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+app01.neoris.net openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+app02.neoris.net openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+app03.neoris.net openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
 
 
 [nfs]
-support1.3771.internal
+bastion
 
 
 
